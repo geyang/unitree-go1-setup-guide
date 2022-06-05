@@ -159,7 +159,13 @@ sudo apt install git tree
 
 ## Setting up proxy for docker daemon
 
-The docker daemon is ran as a system process, so it does not respect the `http_proxy` flag that you set in the shell session. For this reason, we need to set the proxy variables in the daemo systemd config file.
+When trying to `docker pull` or `docker build` on the jetson, you might have ran into this error despite of having `http(s)_proxy` set to the pi.
+
+```bash
+Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io on 127.0.0.53:53: read udp 127.0.0.1:46641->127.0.0.53:53: i/o timeout
+```
+
+This happens because the docker daemon is ran as a system process, so similar to `sudo apt install`, it does not respect the `http_proxy` flag that you set in the `unitree` user's shell session. For this reason, we need to set the proxy variables in the daemo systemd config file.
 
 1. Create a new directory for our Docker service configurations.
 
