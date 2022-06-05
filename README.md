@@ -1,13 +1,23 @@
 # UniTree Go1 Setup Guide
 Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibngax/sc8u0h
 
+## Connecting to Go1
+
+Need to configure your connection to join the intranet.
+
+```bash
+❯ sudo ifconfig en7 down
+Password:
+❯ sudo ifconfig en7 192.168.123.162/24
+❯ sudo ifconfig en7 up
+```
+
 ## Config Your SSH
 
 The password is `123` the username is `unitree`.
 
 ```in
 # inside your ~/.ssh/config
-
 Host go1-pi
     Hostname 192.168.123.161
     User pi
@@ -42,7 +52,7 @@ Three things need to happen
    > SCAN_RESULTS
    ```
 
-   The status should show that the network is still `INACTIVE`, this is because WiFi has not been turned on yet. We will turn it on next.
+   The status should show that the network is still `INACTIVE`, this is because WiFi has not been turned on yet. We will turn it on next.
 
 2. **Now turn on wifi**
 
@@ -57,16 +67,16 @@ Three things need to happen
    First, you can check the routing configurations already setup in pi:
 
    ```bash
-   route -n
-   > Kernel IP routing table
-   > Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-   > 0.0.0.0         192.168.123.1   0.0.0.0         UG    202    0        0 eth0
-   > 0.0.0.0         128.31.32.1     0.0.0.0         UG    303    0        0 wlan0
-   > 0.0.0.0         192.168.12.1    0.0.0.0         UG    305    0        0 wlan1
-   > 128.31.32.0     0.0.0.0         255.255.248.0   U     303    0        0 wlan0
-   > 192.168.12.0    0.0.0.0         255.255.255.0   U     305    0        0 wlan1
-   > 192.168.123.0   0.0.0.0         255.255.255.0   U     202    0        0 eth0
-   > 224.0.0.0       0.0.0.0         240.0.0.0       U     0      0        0 lo
+   > route -n
+   Kernel IP routing table
+   Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+   0.0.0.0         192.168.123.1   0.0.0.0         UG    202    0        0 eth0
+   0.0.0.0         128.31.32.1     0.0.0.0         UG    303    0        0 wlan0
+   0.0.0.0         192.168.12.1    0.0.0.0         UG    305    0        0 wlan1
+   128.31.32.0     0.0.0.0         255.255.248.0   U     303    0        0 wlan0
+   192.168.12.0    0.0.0.0         255.255.255.0   U     305    0        0 wlan1
+   192.168.123.0   0.0.0.0         255.255.255.0   U     202    0        0 eth0
+   224.0.0.0       0.0.0.0         240.0.0.0       U     0      0        0 lo
    ```
 
    In this case the wireless gateway is placed after the ethernet, which does not have the www access. We can move it forward by first removing it, and then adding it back again.
@@ -96,16 +106,16 @@ Three things need to happen
    ```
 
    ```bash
-   route -n
-   > Kernel IP routing table
-   > Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-   > 0.0.0.0         128.31.32.1     0.0.0.0         UG    0      0        0 wlan0
-   > 0.0.0.0         192.168.123.1   0.0.0.0         UG    202    0        0 eth0
-   > 0.0.0.0         192.168.12.1    0.0.0.0         UG    305    0        0 wlan1
-   > 128.31.32.0     0.0.0.0         255.255.248.0   U     303    0        0 wlan0
-   > 192.168.12.0    0.0.0.0         255.255.255.0   U     305    0        0 wlan1
-   > 192.168.123.0   0.0.0.0         255.255.255.0   U     202    0        0 eth0
-   > 224.0.0.0       0.0.0.0         240.0.0.0       U     0      0        0 lo
+   > route -n
+   Kernel IP routing table
+   Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+   0.0.0.0         128.31.32.1     0.0.0.0         UG    0      0        0 wlan0
+   0.0.0.0         192.168.123.1   0.0.0.0         UG    202    0        0 eth0
+   0.0.0.0         192.168.12.1    0.0.0.0         UG    305    0        0 wlan1
+   128.31.32.0     0.0.0.0         255.255.248.0   U     303    0        0 wlan0
+   192.168.12.0    0.0.0.0         255.255.255.0   U     305    0        0 wlan1
+   192.168.123.0   0.0.0.0         255.255.255.0   U     202    0        0 eth0
+   224.0.0.0       0.0.0.0         240.0.0.0       U     0      0        0 lo
    ```
 
    
@@ -165,7 +175,7 @@ When trying to `docker pull` or `docker build` on the jetson, you might have ran
 Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io on 127.0.0.53:53: read udp 127.0.0.1:46641->127.0.0.53:53: i/o timeout
 ```
 
-This happens because the docker daemon is ran as a system process, so similar to `sudo apt install`, it does not respect the `http_proxy` flag that you set in the `unitree` user's shell session. For this reason, we need to set the proxy variables in the daemo systemd config file.
+This happens because the docker daemon is ran as a system process, so similar to `sudo apt install`, it does not respect the `http_proxy` flag that you set in the `unitree` user's shell session. For this reason, we need to set the proxy variables in the daemo systemd config file.
 
 1. Create a new directory for our Docker service configurations.
 
@@ -236,6 +246,12 @@ Password:
 ❯ sudo ifconfig en7 up
 ```
 
+test
+
+
+
+
+
 
 
 ```bash
@@ -304,8 +320,6 @@ Now install `proxy.py`
 ```bash
 pip3 install proxy.py
 ```
-
-
 
 now on other matchines:
 
