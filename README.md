@@ -32,6 +32,21 @@ Host go1-nx
     User unitree
 ```
 
+## Updating the onboard clock
+
+All three computer's internal clocks are off. Wrong system date causes the `apt install` to report invalid dates (it compares the system date with a cutoff). If you run
+
+```bash
+unitree@nx:~ $ date
+Sun 05 Jun 2022 05:28:03 PM EDT
+```
+
+Here I recommend this super legitimate 🤞, unsanitized script from [[The Internet]](https://superuser.com/questions/307158/how-to-use-ntpdate-behind-a-proxy) under sudo:
+
+```bash
+sudo date -s "$(wget -S  "http://www.google.com/" 2>&1 | grep -E '^[[:space:]]*[dD]ate:' | sed 's/^[[:space:]]*[dD]ate:[[:space:]]*//' | head -1l | awk '{print $1, $3, $2,  $5 ,"GMT", $4 }' | sed 's/,//')"
+```
+
 
 
 ## Connecting Rasberry Pi to WiFi
@@ -414,3 +429,51 @@ $ sudo rfkill list all
 
 1. compile the docker image
 2. compile the 
+
+
+
+
+
+## Install Github CLI
+
+```
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update
+sudo apt install gh
+```
+
+
+
+
+
+Compiling UnitreeCameraSDK:
+
+
+
+```bash
+sudo apt install libudev1 libudev-dev
+gh clone UnitreeCameraSDK
+cd UnitreeCameraSDK
+mkdir build 
+cd build
+cmake ..
+make
+```
+
+|      |      | [Go1 robot]                                                  |
+| ---- | ---- | ------------------------------------------------------------ |
+|      |      | NanoA: Jetson Nano (Go1's Head, IP: 192.168.123.13)          |
+|      |      | NanoB: Jetson Nano (Go1's Body, IP: 192.168.123.14)          |
+|      |      | NanoC: Jetson Nano (Go1's Body, IP: 192.168.123.15)          |
+|      |      | (Raspi board has OpenCV 3.x by default. This SDK need OpenCV 4.x .) |
+|      |      | You can login to console by SSH / GUI.                       |
+|      |      |                                                              |
+|      |      |                                                              |
+|      |      | [example source]                                             |
+|      |      | exPUT2: example_putimagetrans2.cc (This example. Sender)     |
+|      |      | exPUT:  example_putimagetrans.cc  (Basic example. Sender)    |
+|      |      | exGET:  example_getimagetrans.cc  (Receiver)                 |
+|      |      |                                                              |
+|      |      | Sender <---> Receiver                                        |
+
