@@ -6,6 +6,8 @@
   - test if the bare-bone docker image runs. 
   - build within the jetson
 - [ ] run the python lcm example, while running the legged sdk example, and print out the message data
+- [ ] add the legged SDK here
+- [ ] add the jetson deployment example here. The deployment repo contain the docker image for deployment, and the python script that runs the LCM publisher with the neural controller.
 
 ## Guide
 
