@@ -1,0 +1,16 @@
+struct vicon_pose_lcmt
+{
+	float translation[3];
+	float rotation[4];
+	float euler[3];
+
+	float linear_velocity[3];
+	float angular_velocity[3];
+
+
+	int32_t seq;
+	int32_t stamp_secs;
+	int32_t stamp_nsecs;
+
+	int64_t timestamp_us;
+}

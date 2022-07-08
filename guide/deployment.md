@@ -9,6 +9,8 @@
 - [ ] add the legged SDK here
 - [ ] add the jetson deployment example here. The deployment repo contain the docker image for deployment, and the python script that runs the LCM publisher with the neural controller.
 
+Need to get everything to run today.
+
 ## Guide
 
 In one terminal:

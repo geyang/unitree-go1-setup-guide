@@ -1,0 +1,30 @@
+struct LowCmd
+{
+    int8_t levelFlag;
+    int16_t commVersion;
+    int16_t robotID;
+    int32_t SN;
+    int8_t bandWidth;
+    MotorCmd motorCmd[20];
+    BmsCmd bms;
+    int8_t wirelessRemote[40];
+    int32_t reserve;
+    int32_t crc;
+}
+
+struct MotorCmd
+{
+		int8_t mode;                      // desired working mode
+		float q;                           // desired angle (unit: radian)
+		float dq;                          // desired velocity (unit: radian/second)
+		float tau;                         // desired output torque (unit: N.m)
+		float Kp;                          // desired position stiffness (unit: N.m/rad )
+		float Kd;                          // desired velocity stiffness (unit: N.m/(rad/s) )
+		int32_t reserve[3];
+}
+
+struct BmsCmd
+{
+    int8_t off;                       // off 0xA5
+    int8_t reserve[3];
+}
