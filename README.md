@@ -68,6 +68,11 @@ Three things need to happen
    ```
 
    The status should show that the network is still `INACTIVE`, this is because WiFi has not been turned on yet. We will turn it on next.
+   
+   If the `list_network` reveals that the network is disabled, you can enable it via
+   ```bash
+   enable_network <id>
+   ```
 
 2. **Now turn on wifi**
 
