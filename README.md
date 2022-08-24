@@ -482,3 +482,6 @@ make
 |      |      |                                                              |
 |      |      | Sender <---> Receiver                                        |
 
+## Control Manual
+Left stick: up/down - forward/backward, left/right - gait height
+Right stick: up/down - printing freq, left/right - yaw rate
