@@ -13,6 +13,8 @@ Need to get everything to run today.
 
 ## Guide
 
+**Before doing this, sit the robot down to prone position** by pressing the <kbd>L2</kbd>+<kbd>A</kbd> twice, then <kbd>L2</kbd>+<kbd>B</kbd> buttons.
+
 In one terminal:
 
 ```bash
