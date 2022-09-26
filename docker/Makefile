@@ -10,12 +10,13 @@ run:
 	docker run -it \
             --env="DISPLAY" \
             --env="QT_X11_NO_MITSHM=1" \
+            --env="PYTHONPATH=${PYTHONPATH}:/" \
             --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
             --env="XAUTHORITY=${XAUTH}" \
             --volume="${XAUTH}:${XAUTH}" \
-            --volume="/home/unitree/mit/jetson-model-deployment/:/home/isaac/jetson-model-deployment" \
+            --volume="/home/unitree/mit/unitree-go1-setup-guide/jetson_deploy:/jetson_deploy" \
             --privileged \
             --runtime=nvidia \
             --net=host \
-            --workdir="/home/isaac/jetson-model-deployment" \
-            episodeyang/jetson-legged-deployment:latest python /home/isaac/jetson-model-deployment/src/scripts/deploy_no_isaac.py
+            --workdir="/" \
+            episodeyang/jetson-legged-deployment:latest python /jetson_deploy/scripts/deploy_policy.py
