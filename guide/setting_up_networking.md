@@ -3,6 +3,7 @@ Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibn
 
 ## Connecting to Go1
 
+> 
 Need to configure your connection to join the intranet.
 
 ```bash
@@ -112,7 +113,7 @@ Three things need to happen
    The problem I still run into, is that sometimes the routing order gets changed back. With the help of [[this thread: Change priority on the default gateway]](https://forums.raspberrypi.com/viewtopic.php?t=278033) in the raspberry pi forum, we are able to fix this issue.
 
    
-
+   
    Edit the file `/etc/dhcpcd.conf` and append the following to the file
 
    ```bash
@@ -183,6 +184,9 @@ sudo apt install git tree
 
 
 ## Setting up proxy for docker daemon
+
+> The following part is done on nvx 
+
 
 When trying to `docker pull` or `docker build` on the jetson, you might have ran into this error despite of having `http(s)_proxy` set to the pi.
 
