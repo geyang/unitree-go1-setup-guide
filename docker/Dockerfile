@@ -1,9 +1,6 @@
 # syntax=docker/dockerfile:experimental
 FROM nvcr.io/nvidia/l4t-pytorch:r32.6.1-pth1.9-py3
 
-ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
-
 # ENV http_proxy="http://192.168.123.161:3128"
 # ENV https_proxy="http://192.168.123.161:3128"
 # ENV ftp_proxy="http://192.168.123.161:3128"
@@ -12,7 +9,6 @@ ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPA
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         vim \
@@ -80,9 +76,3 @@ RUN pip install --user git+https://github.com/catkin/catkin_tools.git
 
 RUN apt-get update
 RUN apt-get install -y freeglut3-dev libudev-dev libgl1-mesa-dev libudev1 libudev-dev libgtk2.0-dev pkg-config
-
-# setup entrypoint
-#COPY ./entrypoint.sh /
-#
-#ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["bash"]
