@@ -3,7 +3,7 @@ Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibn
 
 ## Connecting to Go1
 
-> 
+> Local machine
 Need to configure your connection to join the intranet.
 
 ```bash
