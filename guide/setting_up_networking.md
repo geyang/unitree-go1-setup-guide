@@ -3,7 +3,7 @@ Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibn
 
 ## Connecting to Go1
 
-> On local machine
+> Do this on your macbook, that you connect with the robot)
 
 Need to configure your connection to join the intranet.
 
@@ -33,29 +33,48 @@ Host go1-nx
     Hostname 192.168.123.15
     User unitree
 ```
-
-## Updating the onboard clock
-
-All three computer's internal clocks are off. Wrong system date causes the `apt install` to report invalid dates (it compares the system date with a cutoff). If you run
+Congratulations! Now you are able to connect to the Go1 via ssh! The code below should work:
 
 ```bash
-unitree@nx:~ $ date
-Sun 05 Jun 2022 05:28:03 PM EDT
+ssh go1-pi
+> Last login: Tue Oct 11 00:37:30 2022 from 192.168.123.162
+  Tue 11 Oct 2022 12:00:00 AM EDT
+  pi@raspberrypi:~ $
 ```
-
-Here I recommend this super legitimate 🤞, unsanitized script from [[The Internet]](https://superuser.com/questions/307158/how-to-use-ntpdate-behind-a-proxy) under sudo:
-
-```bash
-sudo date -s "$(wget -S  "http://www.google.com/" 2>&1 | grep -E '^[[:space:]]*[dD]ate:' | sed 's/^[[:space:]]*[dD]ate:[[:space:]]*//' | head -1l | awk '{print $1, $3, $2,  $5 ,"GMT", $4 }' | sed 's/,//')"
-```
-
-
 
 ## Connecting Rasberry Pi to WiFi
 
-Three things need to happen
+Now inside the raspberry-Pi, you can connect to the Stata wifi. The wifi module is off by default (everytime you power the robot off). There are **four** computers onboard the robot
+- The raspberry-pi: `pi@go1-pi`
+- A jetson-nano: `unitree@go1-nano2gb` (this is in the "head" with the two forward facing camera (not sure))
+- Another jetson-nano: `unitree@go1-unitree-desktop`
+- The beefy Xavier: `unitree@go1-nx`. this is the machine on which we run all of our inference.
+
+We use the raspberry-pi as the access point to the public internet. On the other computers, we use the pi as a proxy. 
+
+Connect to the pi on **two separate terminals**.
 
 1. **Setting up with `wpa_cli`**: 
+
+   **Not the first time**:
+   If the wifi is already setup, follow these steps and ignore the next part.
+   
+   ```bash
+   wpa_cli -i wlan0 
+   % now you are in an interactive session:
+   > status
+   wpa_state=INTERFACE_DISABLED
+   p2p_device_address=a6:48:e3:43:9f:b6
+   address=e4:5f:01:64:ec:e6
+   uuid=bf288ae9-f477-578f-9940-6536e26c3edf
+   ....
+   ```
+   If this is not your first time, skip over the next block, to go directly to step-2.
+
+   **To exit the interactive session, type <kbd>q</kbd>**
+
+
+   **If you are setting up a robot for the first time**:
 
    ```bash
    wpa_cli -i wlan0
@@ -72,12 +91,30 @@ Three things need to happen
    The status should show that the network is still `INACTIVE`, this is because WiFi has not been turned on yet. We will turn it on next.
 
 2. **Now turn on wifi**
+   
+   **Do this in the second ssh session**
 
    ```bash
    sudo ifconfig wlan0 up
    ```
+   As soon as you type this in, you should see the following printed in the first ssh session. This shows that the network is now connected to Stata's public wifi (not-protected!)
 
-   When the WiFi turns on, the status should instantly change to show 
+   ```bash
+   <3>CTRL-EVENT-SCAN-STARTED
+   <3>CTRL-EVENT-SCAN-RESULTS
+   <3>WPS-AP-AVAILABLE
+   <3>Trying to associate with SSID 'StataCenter'
+   <3>Associated with ae:46:8d:36:1d:4e
+   <3>CTRL-EVENT-CONNECTED - Connection to ae:46:8d:36:1d:4e completed [id=2 id_str=]
+   <3>CTRL-EVENT-SUBNET-STATUS-UPDATE status=0
+   <3>CTRL-EVENT-REGDOM-CHANGE init=COUNTRY_IE type=COUNTRY alpha2=US
+   <3>CTRL-EVENT-SCAN-STARTED
+   <3>CTRL-EVENT-SCAN-RESULTS
+   <3>CTRL-EVENT-SCAN-STARTED
+   <3>CTRL-EVENT-SCAN-RESULTS
+   <3>CTRL-EVENT-SCAN-STARTED
+   <3>CTRL-EVENT-SCAN-RESULTS
+   ```
 
 3. **Adding the correct gateway to route** This one is a bit tricky (and unreliable)
 
@@ -113,8 +150,6 @@ Three things need to happen
 
    The problem I still run into, is that sometimes the routing order gets changed back. With the help of [[this thread: Change priority on the default gateway]](https://forums.raspberrypi.com/viewtopic.php?t=278033) in the raspberry pi forum, we are able to fix this issue.
 
-   
-   
    Edit the file `/etc/dhcpcd.conf` and append the following to the file
 
    ```bash
@@ -135,20 +170,38 @@ Three things need to happen
    224.0.0.0       0.0.0.0         240.0.0.0       U     0      0        0 lo
    ```
 
-   
+## Updating the onboard clock (!!Important!!)
 
-   
+> Doing this step requires that the raspberry pi alredy has access to the internet. Go back to the previous step if you skipped it.
+
+All three computer's internal clocks are off. Wrong system date causes the `apt install` to report invalid dates (it compares the system date with a cutoff). You can test if the datetime is off by running:
+
+```bash
+unitree@nx:~ $ date
+Sun 05 Jun 2022 05:28:03 PM EDT
+```
+And upon rebooting of the robot, **all computers onboard** should have wrong datetime. 
+
+To fix this issue, you need to run the following script in **every computer that you need to use, starting with the pi**.
+  
+Here I recommend this super legitimate 🤞, unsanitized script from [[The Internet]](https://superuser.com/questions/307158/how-to-use-ntpdate-behind-a-proxy) under sudo:
+
+```bash
+sudo date -s "$(wget -S  "http://www.google.com/" 2>&1 | grep -E '^[[:space:]]*[dD]ate:' | sed 's/^[[:space:]]*[dD]ate:[[:space:]]*//' | head -1l | awk '{print $1, $3, $2,  $5 ,"GMT", $4 }' | sed 's/,//')"
+```
+
+> **Note:** without a proxy server set up on the pi, running the previous script would not work on the other computers. So jump to the next section and set up the proxy first before running this script on the other machines.
 
 ## Setting up internet access for Nano and NX
 
-I setup www access on the nano and the NX using a proxy server on the raspberry pi:
+I setup www access on the nano and the NX using a proxy server **on the raspberry pi**:
 
 ```bash
 # On raspberrypi
 screen -dm python3 -m proxy --host 0.0.0.0 --port 3128
 ```
 
-Then on Nano and NX: we edit the `~/.profile` file because this is only needed when running from a login shell.
+**Then on Nano and NX**: we edit the `~/.profile` file because this is only needed when running from a login shell.
 
 ```bash
 # Edit ~/.profile
@@ -186,7 +239,7 @@ sudo apt install git tree
 
 ## Setting up proxy for docker daemon
 
-> The following part is done on nvx 
+> The following part is done on nx 
 
 
 When trying to `docker pull` or `docker build` on the jetson, you might have ran into this error despite of having `http(s)_proxy` set to the pi.
@@ -245,13 +298,11 @@ After the service is restarted Docker should be able to pull images from externa
 
 
 
-
+> Congrats! This is the end of this doc.
 
 ---
 
-
-
-
+---
 
 ## Configuring Wifi on Rasberry Pi
 
