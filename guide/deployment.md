@@ -1,4 +1,11 @@
-# Deployment (needs update)
+# Deployment
+
+# Step 1: Connect to `go1-nx` via vscode
+
+
+
+
+---
 
 ## ToDos
 
