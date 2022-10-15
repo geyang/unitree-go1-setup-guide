@@ -2,9 +2,39 @@
 
 This folder contains the Dockerfile for building the deployment docker image on the Unitree Go1 robot. 
 
-The image is released as `episodeyang/jetson-legged-deployment:latest` on docker hub.
+The image is released as `episodeyang/jetson-legged-deployment:latest` on docker hub. We increase the version
+number upon each build.
 
 - Ge
+
+## Logging into Nvidia `ngc` CLI Tool
+
+> Register an accoint, then visit: https://ngc.nvidia.com/setup/api-key 
+
+Your API Key authenticates your use of NGC service when using NGC CLI or the Docker client. Anyone with this API Key has access to all services, actions, and resources on your behalf.
+
+Click Generate API Key to create your own API Key. If you have forgotten or lost your API Key, you can come back to this page to create a new one at any time.
+
+Use your API key to log in to the NGC registry by entering the following command and following the prompts:
+
+NGC CLI
+```bash
+ngc config set
+```
+
+Docker™ For the username, enter '$oauthtoken' exactly as shown. It is a special authentication token for all users.
+```bash
+docker login nvcr.io
+> Username: $oauthtoken
+> Password: dmsdfasdfadfasdfasfasfasdfasfdasdfasdf
+```
+
+API Key generated successfully. This is the only time your API Key will be displayed. Keep your API Key secret.
+Do not share it or store it in a place where others can see or copy it.
+
+```
+API Key: dmsdfasdfadfasdfasfasfasdfasfdasdfasdf
+```
 
 ---
 

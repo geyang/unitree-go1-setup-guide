@@ -1,11 +1,17 @@
+.EXPORT_ALL_VARIABLES:
+
+VERSION=`<VERSION`
+
 default: build release
 build: 
-	docker build --progress=plain -t jetson-legged-deployment . 
+	docker build --progress=plain -t jetson-legged-deployment:v$(VERSION) .
 clean-build: 
-	docker build -t jetson-legged-deployment . --no-cache=true
+	docker build -t jetson-legged-deployment:v$(VERSION) . --no-cache=true
 release:
-	docker tag jetson-legged-deployment episodeyang/jetson-legged-deployment
-	docker push episodeyang/jetson-legged-deployment
+	docker tag jetson-legged-deployment:v$(VERSION) episodeyang/jetson-legged-deployment:v$(VERSION)
+	docker tag jetson-legged-deployment:v$(VERSION) episodeyang/jetson-legged-deployment:latest
+	docker push episodeyang/jetson-legged-deployment:v$(VERSION)
+	docker push episodeyang/jetson-legged-deployment:latest
 run:
 	docker run -it \
             --env="DISPLAY" \
