@@ -20,25 +20,30 @@ Need to get everything to run today.
 
 ## Guide
 
-**Before doing this, sit the robot down to prone position** by pressing the <kbd>L2</kbd>+<kbd>A</kbd> twice, then <kbd>L2</kbd>+<kbd>B</kbd> buttons.
+Follow the prerequisite networking setup so the Xavier is connected to the internet through the proxy server on the Pi.
+
+**Before deploying, sit the robot down to prone position** by pressing the <kbd>L2</kbd>+<kbd>A</kbd> twice (or until the robot cycles to the state of almost touching the floor), then <kbd>L2</kbd>+<kbd>B</kbd> buttons.
 
 In one terminal:
 
 ```bash
-ssh unitree@192.168.123.15
-cd /scratch/gmargo/unitree_legged_sdk
-./start_unitree_[sdk or controller].sh
+ssh go1-nx
+cd /home/unitree/mit/legged-agility_private/go1_gym_deploy/unitree_legged_sdk
+./lcm_position
 ```
 
 In another terminal:
 ```bash
-ssh unitree@192.168.123.15
-cd /scratch/gmargo/jetson-model-deployment/docker
+ssh go1-nx
+cd /home/unitree/mit/legged-agility_private/go1_gym_deploy/docker
 make run
 ```
 [now you are in the docker container]
 ```bash
-cd jetson_deploy/scripts
-python deploy_policy.py  [* currently error occurs here]
+export PYTHONPATH=$PWD
+cd go1_gym_deploy/scripts
+python deploy_policy.py
 ```
-[you will be prompted to press enter for the robot to (1) stand up and (2) start the control]
+[you will need to press enter **twice** for the robot to (1) stand up and (2) start the control]
+
+[when the robot stands up after pressing enter the first time, remove all external cables and keep a hand on the robot's handle to avoid damage when the control starts upon pressing enter the secnod time]
