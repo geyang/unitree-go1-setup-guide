@@ -3,9 +3,10 @@ Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibn
 
 ## Connecting to Go1
 
-> Do this on your macbook, that you connect with the robot)
+> Do this on your macbook that you connect with the robot through the ethernet cable
 
 Need to configure your connection to join the intranet.
+Note that `en7` may instead be `en5` or `en8` for example, so you should run `ifconfig` and check the name of the bottom entry.
 
 ```bash
 ❯ sudo ifconfig en7 down
@@ -121,7 +122,7 @@ Connect to the pi on **two separate terminals**.
    First, you can check the routing configurations already setup in pi:
 
    ```bash
-   > route -n
+   route -n
    Kernel IP routing table
    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
    0.0.0.0         192.168.123.1   0.0.0.0         UG    202    0        0 eth0
@@ -158,7 +159,7 @@ Connect to the pi on **two separate terminals**.
    ```
 
    ```bash
-   > route -n
+   route -n
    Kernel IP routing table
    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
    0.0.0.0         128.31.32.1     0.0.0.0         UG    0      0        0 wlan0
