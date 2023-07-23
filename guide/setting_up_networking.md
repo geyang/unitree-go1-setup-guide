@@ -267,8 +267,8 @@ This happens because the docker daemon is ran as a system process, so similar to
 
    ```
    [Service]
-   Environment="HTTP_PROXY=http://myproxy.hostname:8080"
-   Environment="HTTPS_PROXY=https://myproxy.hostname:8080/"
+   Environment="HTTP_PROXY=http://myproxy.hostname:3128"
+   Environment="HTTPS_PROXY=https://myproxy.hostname:3128"
    Environment="NO_PROXY="localhost,127.0.0.1,::1"
    ```
 
