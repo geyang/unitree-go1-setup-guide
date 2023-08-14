@@ -223,10 +223,10 @@ deb http://deb.debian.org/debian buster-updates main contrib non-free
 deb http://deb.debian.org/debian buster-backports main contrib non-free
 ```
 
-**Then on Nano and NX**: we edit the `~/.profile` file because this is only needed when running from a login shell.
+**Then on Nano and NX**: we add the following to the `~/etc/profile` file because this is only needed when using sudo.
 
 ```bash
-# Edit ~/.profile
+# Edit ~/etc/profile
 export http_proxy=http://192.168.123.161:3128
 export https_proxy=http://192.168.123.161:3128
 export ftp_proxy=http://192.168.123.161:3128
