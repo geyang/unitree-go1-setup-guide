@@ -1,4 +1,5 @@
 # UniTree Go1 Setup Guide
+
 Setup guide for the UniTree Go1 robot. Here: https://www.yuque.com/ironfatty/ibngax/sc8u0h
 
 ## Connecting to Go1
@@ -34,6 +35,7 @@ Host go1-nx
     Hostname 192.168.123.15
     User unitree
 ```
+
 Congratulations! Now you are able to connect to the Go1 via ssh! The code below should work:
 
 ```bash
@@ -46,22 +48,23 @@ ssh go1-pi
 ## Connecting Rasberry Pi to WiFi
 
 Now inside the raspberry-Pi, you can connect to the Stata wifi. The wifi module is off by default (everytime you power the robot off). There are **four** computers onboard the robot
+
 - The raspberry-pi: `pi@go1-pi`
 - A jetson-nano: `unitree@go1-nano2gb` (this is in the "head" with the two forward facing camera (not sure))
 - Another jetson-nano: `unitree@go1-unitree-desktop`
 - The beefy Xavier: `unitree@go1-nx`. this is the machine on which we run all of our inference.
 
-We use the raspberry-pi as the access point to the public internet. On the other computers, we use the pi as a proxy. 
+We use the raspberry-pi as the access point to the public internet. On the other computers, we use the pi as a proxy.
 
 Connect to the pi on **two separate terminals**.
 
-1. **Setting up with `wpa_cli`**: 
+1. **Setting up with `wpa_cli`**:
 
    **Not the first time**:
    If the wifi is already setup, follow these steps and ignore the next part.
-   
+
    ```bash
-   wpa_cli -i wlan0 
+   wpa_cli -i wlan0
    % now you are in an interactive session:
    > status
    wpa_state=INTERFACE_DISABLED
@@ -70,10 +73,10 @@ Connect to the pi on **two separate terminals**.
    uuid=bf288ae9-f477-578f-9940-6536e26c3edf
    ....
    ```
+
    If this is not your first time, skip over the next block, to go directly to step-2.
 
    **To exit the interactive session, type <kbd>q</kbd>**
-
 
    **If you are setting up a robot for the first time**:
 
@@ -92,12 +95,13 @@ Connect to the pi on **two separate terminals**.
    The status should show that the network is still `INACTIVE`, this is because WiFi has not been turned on yet. We will turn it on next.
 
 2. **Now turn on wifi**
-   
+
    **Do this in the second ssh session**
 
    ```bash
    sudo ifconfig wlan0 up
    ```
+
    As soon as you type this in, you should see the following printed in the first ssh session. This shows that the network is now connected to Stata's public wifi (not-protected!)
 
    ```bash
@@ -143,9 +147,7 @@ Connect to the pi on **two separate terminals**.
    sudo route add default gw <your-gateway-ip>
    ```
 
-   Before doing this, you should be able to ping that gate-way IP address. 
-
-   
+   Before doing this, you should be able to ping that gate-way IP address.
 
 4. **Changing the priority on the default gateway** from `eth0` to `wlan0`
 
@@ -181,10 +183,11 @@ All three computer's internal clocks are off. Wrong system date causes the `apt 
 unitree@nx:~ $ date
 Sun 05 Jun 2022 05:28:03 PM EDT
 ```
-And upon rebooting of the robot, **all computers onboard** should have wrong datetime. 
+
+And upon rebooting of the robot, **all computers onboard** should have wrong datetime.
 
 To fix this issue, you need to run the following script in **every computer that you need to use, starting with the pi**.
-  
+
 Here I recommend this super legitimate 🤞, unsanitized script from [[The Internet]](https://superuser.com/questions/307158/how-to-use-ntpdate-behind-a-proxy) under sudo:
 
 ```bash
@@ -200,6 +203,24 @@ I setup www access on the nano and the NX using a proxy server **on the raspberr
 ```bash
 # On raspberrypi
 screen -dm python3 -m proxy --host 0.0.0.0 --port 3128
+```
+
+To install screen and proxy on the raspberry pi:
+
+```bash
+sudo apt update
+sudo apt install screen
+
+pip3 install proxy.py
+```
+
+If you would like to change the sources at `etc/apt/sources.list`:
+
+```bash
+deb http://deb.debian.org/debian buster main contrib non-free
+deb http://deb.debian.org/debian-security/ buster/updates main contrib non-free
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb http://deb.debian.org/debian buster-backports main contrib non-free
 ```
 
 **Then on Nano and NX**: we edit the `~/.profile` file because this is only needed when running from a login shell.
@@ -220,28 +241,25 @@ visudo
 Then find a line that states:
 
 ```
-Defaults env_reset 
+Defaults env_reset
 ```
 
 and add after it:
 
 ```
 Defaults env_reset  # <= previous line
-Defaults env_keep="http_proxy ftp_proxy" 
+Defaults env_keep="http_proxy https_proxy ftp_proxy"
 ```
 
 Things will start working as expected.
 
 ```bash
-sudo apt install git tree 
+sudo apt install git tree
 ```
-
-
 
 ## Setting up proxy for docker daemon
 
-> The following part is done on nx 
-
+> The following part is done on nx
 
 When trying to `docker pull` or `docker build` on the jetson, you might have ran into this error despite of having `http(s)_proxy` set to the pi.
 
@@ -288,16 +306,12 @@ This happens because the docker daemon is ran as a system process, so similar to
 
 After the service is restarted Docker should be able to pull images from external repositories. You can test this by attempting to pull down an image. If the download completes and does not timeout, your proxy settings have been applied.
 
-
-
 ## Deploying the Trained Controller
 
 1. compile the Unitree legged sdk on nano. This one runs the lcm driver.
 2. compile the docker image on nano using docker. This is the controller that communicates with the lcm driver.
 
 ### Step 1: Compiling the unitree legged sdk on nano
-
-
 
 > Congrats! This is the end of this doc.
 
@@ -319,12 +333,6 @@ Password:
 ```
 
 test
-
-
-
-
-
-
 
 ```bash
 ifconfig
@@ -365,8 +373,6 @@ pip3 install proxy.py
 python3 -m proxy -p 3128
 ```
 
-
-
 ## Install `ngrok` and `proxy.py` on Pi
 
 ```bash
@@ -396,15 +402,11 @@ pip3 install proxy.py
 now on other matchines:
 
 ```bash
-unitree@unitree-desktop:~$ 
+unitree@unitree-desktop:~$
 sudo snap set system proxy.http="http://192.168.123.161:3128"
 sudo snap set system proxy.https="http://192.168.123.161:3128"
 sudo snap install core ngrok
 ```
-
-
-
-
 
 ## Using http_proxy for apt install
 
@@ -421,13 +423,13 @@ visudo
 Then find a line that states:
 
 ```
-Defaults env_reset 
+Defaults env_reset
 ```
 
 and add after it:
 
 ```
-Defaults env_keep="http_proxy ftp_proxy" 
+Defaults env_keep="http_proxy ftp_proxy"
 ```
 
 Things will start working as expected.
@@ -440,10 +442,6 @@ In order to not only fix apt-get but also graphical X11 utils as e.g synaptic,mi
 Defaults env_keep = "https_proxy ftp_proxy"
 ```
 
-
-
-
-
 ## Connect Rasberry PI to Internet
 
 Look up the gateway on a computer in the same network.
@@ -454,22 +452,18 @@ Look up the gateway on a computer in the same network.
   153  ping 8.8.8.8
 ```
 
-
-
 The `wlan0` is the wifi card that you should use.
 
 ```bash
 wpa_cli -i wlan0
 ```
 
-
-
 https://askubuntu.com/questions/62166/siocsifflags-operation-not-possible-due-to-rf-kill
 
 ```
 $ sudo rfkill list all
 
-0: phy0: Wireless LAN 
+0: phy0: Wireless LAN
 
      Soft blocked: yes
 
@@ -485,11 +479,7 @@ $ sudo rfkill list all
 ## Next Steps
 
 1. compile the docker image
-2. compile the 
-
-
-
-
+2. compile the
 
 ## Install Github CLI
 
@@ -500,37 +490,30 @@ sudo apt update
 sudo apt install gh
 ```
 
-
-
-
-
 Compiling UnitreeCameraSDK:
-
-
 
 ```bash
 sudo apt install libudev1 libudev-dev
 gh clone UnitreeCameraSDK
 cd UnitreeCameraSDK
-mkdir build 
+mkdir build
 cd build
 cmake ..
 make
 ```
 
-|      |      | [Go1 robot]                                                  |
-| ---- | ---- | ------------------------------------------------------------ |
-|      |      | NanoA: Jetson Nano (Go1's Head, IP: 192.168.123.13)          |
-|      |      | NanoB: Jetson Nano (Go1's Body, IP: 192.168.123.14)          |
-|      |      | NanoC: Jetson Nano (Go1's Body, IP: 192.168.123.15)          |
-|      |      | (Raspi board has OpenCV 3.x by default. This SDK need OpenCV 4.x .) |
-|      |      | You can login to console by SSH / GUI.                       |
-|      |      |                                                              |
-|      |      |                                                              |
-|      |      | [example source]                                             |
-|      |      | exPUT2: example_putimagetrans2.cc (This example. Sender)     |
-|      |      | exPUT:  example_putimagetrans.cc  (Basic example. Sender)    |
-|      |      | exGET:  example_getimagetrans.cc  (Receiver)                 |
-|      |      |                                                              |
-|      |      | Sender <---> Receiver                                        |
-
+|     |     | [Go1 robot]                                                         |
+| --- | --- | ------------------------------------------------------------------- |
+|     |     | NanoA: Jetson Nano (Go1's Head, IP: 192.168.123.13)                 |
+|     |     | NanoB: Jetson Nano (Go1's Body, IP: 192.168.123.14)                 |
+|     |     | NanoC: Jetson Nano (Go1's Body, IP: 192.168.123.15)                 |
+|     |     | (Raspi board has OpenCV 3.x by default. This SDK need OpenCV 4.x .) |
+|     |     | You can login to console by SSH / GUI.                              |
+|     |     |                                                                     |
+|     |     |                                                                     |
+|     |     | [example source]                                                    |
+|     |     | exPUT2: example_putimagetrans2.cc (This example. Sender)            |
+|     |     | exPUT: example_putimagetrans.cc (Basic example. Sender)             |
+|     |     | exGET: example_getimagetrans.cc (Receiver)                          |
+|     |     |                                                                     |
+|     |     | Sender <---> Receiver                                               |
